@@ -1,7 +1,15 @@
+import os
 import csv
+from pathlib import Path
 
-#These are the file prefixes used in the output files
-samples = ['B.cinerea','DLY-16-612','SCD-16-611']
+# scrape 'output' directory and use subfoldernames as sample names for further processing,
+# this requires a folder structure of 'output/sampleID'
+print("Reading content of output directory")
+samples = [dI for dI in os.listdir('output') if os.path.isdir(os.path.join('output',dI))]
+print("found following isolates:")
+for sample in samples:
+	print(sample)
+print('============================================')
 
 #Conditions for effector candidates
 effectorPscore = 0.8 # min EffectorP score
@@ -10,6 +18,9 @@ Cyscutoff = 2 # min number of cysteins
 
 for sample in samples:
 
+	script_dir = Path.cwd()
+	isolate_output_dir = script_dir / "output" / sample
+	
 	proteins = {}
 	deepsig = {}
 	signalP = {}
@@ -29,7 +40,9 @@ for sample in samples:
 	print(sample,'- Processing all the raw data')
 
 	#Read fasta file with protein sequences and IDs
-	with open(sample+'.proteins.fasta') as file:
+	input_file = sample+'.proteins.fasta'
+	input_file_path = isolate_output_dir / input_file
+	with open(input_file_path) as file:
 		print(sample,'- reading proteins file')
 		input = file.read().splitlines()
 		for line in input:
@@ -46,8 +59,10 @@ for sample in samples:
 
 	print(sample,'- processed proteins data')
 
-    #Read interproScan output
-	with open(sample+".interproscan.tsv") as file:
+	#Read interproScan output
+	input_file = sample+'.interproscan.tsv'
+	input_file_path = isolate_output_dir / input_file
+	with open(input_file_path) as file:
 		print(sample,'- reading interproScan file')
 		input = csv.reader(file, delimiter='\t')
 		for line in input:
@@ -64,7 +79,9 @@ for sample in samples:
 	print(sample, '- processed interproScan data')
 
 	#Read dbCAN2 CAZyme output
-	with open(sample+".cazymes.txt") as file:
+	input_file = sample+'.cazymes.txt'
+	input_file_path = isolate_output_dir / input_file
+	with open(input_file_path) as file:
 		print(sample,'- reading CAZyme file')
 		input = csv.reader(file, delimiter='\t')
 		next(input, None)
@@ -75,7 +92,9 @@ for sample in samples:
 	print(sample,'- processed dbCAN cazyme data')
 
 	#Read deepsig output
-	with open(sample+".deepsig.out") as file:
+	input_file = sample+'.deepsig.out'
+	input_file_path = isolate_output_dir / input_file
+	with open(input_file_path) as file:
 		print(sample,'- reading deepsig file')
 		input = csv.reader(file, delimiter='\t')
 		for line in input:
@@ -86,7 +105,9 @@ for sample in samples:
 	print(sample,'- processed deepsig data')
 
 	#Read effectorP output
-	with open(sample+".effectorP.tsv") as file:
+	input_file = sample+'.effectorP.tsv'
+	input_file_path = isolate_output_dir / input_file
+	with open(input_file_path) as file:
 		print(sample,'- reading effectorP file')
 		input = csv.reader(file, delimiter='\t')
 		for line in input:
@@ -152,7 +173,16 @@ for sample in samples:
 
 	print(sample,'- processed cystein content and MW for candidates')
 
+	#defining ouput files
+	output_name_candidates = sample+'.candidates.txt'
+	output_file_candidates = isolate_output_dir / output_name_candidates
 
+	output_name_candidates_mature_fasta = sample+'.candidates.mature.fasta'
+	output_file_candidates_mature_fasta = isolate_output_dir / output_name_candidates_mature_fasta
+
+	output_name_candidates_fasta = sample+'.candidates.fasta'
+	output_file_candidates_fasta = isolate_output_dir / output_name_candidates_fasta
+	
 	#everything: SignalP[0/1], EffectorP[float], Cysteins[int], MW[float], aaSequence[string]
 	for element in matureProtein:
 		#If effectorP score > 0:
@@ -161,14 +191,14 @@ for sample in samples:
 				if cysteins[element] >= Cyscutoff:
 					if element in interproScan:
 						candidates[element] = effectorP[element], cysteins[element], proteinMW[element], cazymes[element], interproScan[element], matureProtein[element]
-						print(element,'\t','SignalP=SP', '\t', 'EffectorP_Score:', effectorP[element],'\t', 'Cysteins:', cysteins[element], '\t', 'MW:', proteinMW[element], '\t', 'CAZyme:', cazymes[element], '\t', 'InterProScan_Results:', interproScan[element], file=open(sample+".candidates.txt","a"))
-						print('>'+element, '\n'+matureProtein[element], file=open(sample+'.candidates.mature.fasta','a'))
-						print('>'+element, '\n'+proteins[element], file=open(sample+'.candidates.fasta','a'))
+						print(element,'\t','SignalP=SP', '\t', 'EffectorP_Score:', effectorP[element],'\t', 'Cysteins:', cysteins[element], '\t', 'MW:', proteinMW[element], '\t', 'CAZyme:', cazymes[element], '\t', 'InterProScan_Results:', interproScan[element], file=open(output_file_candidates,"a"))
+						print('>'+element, '\n'+matureProtein[element], file=open(output_file_candidates_mature_fasta,'a'))
+						print('>'+element, '\n'+proteins[element], file=open(output_file_candidates_fasta,'a'))
 					else:
 						candidates[element] = effectorP[element], cysteins[element], proteinMW[element], cazymes[element], 'No InterProScan Hits', matureProtein[element]
-						print(element,'\t','SignalP=SP', '\t', 'EffectorP_Score:', effectorP[element],'\t', 'Cysteins:', cysteins[element], '\t', 'MW:', proteinMW[element],  '\t', 'CAZyme:', cazymes[element], '\t', 'InterProScan_Results:', 'NONE', file=open(sample+".candidates.txt","a"))
-						print('>'+element, '\n'+matureProtein[element], file=open(sample+'.candidates.mature.fasta','a'))
-						print('>'+element, '\n'+proteins[element], file=open(sample+'.candidates.fasta','a'))
+						print(element,'\t','SignalP=SP', '\t', 'EffectorP_Score:', effectorP[element],'\t', 'Cysteins:', cysteins[element], '\t', 'MW:', proteinMW[element],  '\t', 'CAZyme:', cazymes[element], '\t', 'InterProScan_Results:', 'NONE', file=open(output_file_candidates,"a"))
+						print('>'+element, '\n'+matureProtein[element], file=open(output_file_candidates_mature_fasta,'a'))
+						print('>'+element, '\n'+proteins[element], file=open(output_file_candidates_fasta,'a'))
 
 	print('============================================')
 	print(sample,'============= Summary ============')
