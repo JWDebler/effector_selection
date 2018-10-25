@@ -19,6 +19,8 @@ Cyscutoff = 2 # min number of cysteins
 for sample in samples:
 
 	script_dir = Path.cwd()
+	
+	#Change this to where outputfiles are
 	isolate_output_dir = script_dir / "output" / sample
 	
 	proteins = {}
@@ -40,6 +42,7 @@ for sample in samples:
 	print(sample,'- Processing all the raw data')
 
 	#Read fasta file with protein sequences and IDs
+	#And fill lists with default values
 	input_file = sample+'.proteins.fasta'
 	input_file_path = isolate_output_dir / input_file
 	with open(input_file_path) as file:
@@ -81,15 +84,21 @@ for sample in samples:
 	#Read dbCAN2 CAZyme output
 	input_file = sample+'.cazymes.txt'
 	input_file_path = isolate_output_dir / input_file
-	with open(input_file_path) as file:
-		print(sample,'- reading CAZyme file')
-		input = csv.reader(file, delimiter='\t')
-		next(input, None)
-		for line in input:
-			if int(line[5]) >= 2:
-				cazymes[line[0]] = 'Yes'
-
-	print(sample,'- processed dbCAN cazyme data')
+	if input_file_path.is_file():
+		with open(input_file_path) as file:
+			print(sample,'- reading CAZyme file')
+			input = csv.reader(file, delimiter='\t')
+			next(input, None)
+			for line in input:
+				if int(line[5]) >= 2:
+					cazymes[line[0]] = 'Yes'
+					
+			print(sample,'- processed dbCAN cazyme data')
+			
+	else: 
+		print('no cazymes file')
+	
+	
 
 	#Read deepsig output
 	input_file = sample+'.deepsig.out'
@@ -182,7 +191,7 @@ for sample in samples:
 
 	output_name_candidates_fasta = sample+'.candidates.fasta'
 	output_file_candidates_fasta = isolate_output_dir / output_name_candidates_fasta
-	
+
 	#everything: SignalP[0/1], EffectorP[float], Cysteins[int], MW[float], aaSequence[string]
 	for element in matureProtein:
 		#If effectorP score > 0:
@@ -203,9 +212,10 @@ for sample in samples:
 	print('============================================')
 	print(sample,'============= Summary ============')
 	print(sample,'- Selection of effector candidates:')
-	print(sample,'- has Signal peptide (SignalP & deepsig')
+	print(sample,'- has Signal peptide (SignalP & deepsig)')
 	print(sample,'- EffectorP score >=', effectorPscore)
 	print(sample,'- Cysteins >=', Cyscutoff)
 	print(sample,'- MW of mature protein <=', MWcutoff, 'kDa')
 	print(sample,'- Effector candidates:',len(candidates))
 	print('============================================')
+	
