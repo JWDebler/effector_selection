@@ -61,7 +61,6 @@ for sample in samples:
 	with open(input_file_path) as file:
 		print(sample,'- reading proteins file')
 		input = file.read().splitlines()
-		print(input)
 		for line in input:
 			if not line.strip(): continue
 			if line[0] == '>':
