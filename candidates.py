@@ -55,7 +55,7 @@ for sample in samples:
 
 	#Read fasta file with protein sequences and IDs
 	#And fill lists with default values
-	input_file = sample+'genemark.proteins.fasta'
+	input_file = sample+'.genemark.proteins.fasta'
 	input_file_path = isolate_output_dir / input_file
 	with open(input_file_path) as file:
 		print(sample,'- reading proteins file')
