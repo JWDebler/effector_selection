@@ -2,6 +2,17 @@ import os
 import csv
 from pathlib import Path
 
+# This script expects a folder structure like this:
+# 
+# ├── candidates.py
+# ├── output
+# |     ├── 206-15
+# |         ├── 206-15.deepsig.out
+# |         ├── 206-15.effectorP.tsv
+# |         ├── 206-15.genemark.proteins.fasta
+# |         ├── 206-15.interproscan.tsv
+# |         ├── 206-15.cazymes.txt <-- this one is optional
+#
 # scrape 'output' directory and use subfoldernames as sample names for further processing,
 # this requires a folder structure of 'output/sampleID'
 print("Reading content of output directory")
@@ -11,11 +22,12 @@ for sample in samples:
 	print(sample)
 print('============================================')
 
+################ SETUP ################
 #Conditions for effector candidates
 effectorPscore = 0.8 # min EffectorP score
 MWcutoff = 25  # molecular weight of mature (cleaved signal peptide) candidate
 Cyscutoff = 2 # min number of cysteins
-
+#######################################
 for sample in samples:
 
 	script_dir = Path.cwd()
@@ -43,7 +55,7 @@ for sample in samples:
 
 	#Read fasta file with protein sequences and IDs
 	#And fill lists with default values
-	input_file = sample+'.proteins.fasta'
+	input_file = sample+'genemark.proteins.fasta'
 	input_file_path = isolate_output_dir / input_file
 	with open(input_file_path) as file:
 		print(sample,'- reading proteins file')
