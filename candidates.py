@@ -69,7 +69,7 @@ for sample in samples:
 				signalP[name] = 0
 				deepsig[name] = 0
 				effectorP[name] = 0
-				cazymes[name] = 'No'
+				cazymes[name] = 'NA'
 
 			else:
 				proteins[name] += line
@@ -106,6 +106,8 @@ for sample in samples:
 			for line in input:
 				if int(line[5]) >= 2:
 					cazymes[line[0]] = 'Yes'
+				else:
+					cazymes[line[0]] = 'No'
 					
 			print(sample,'- processed dbCAN cazyme data')
 			
