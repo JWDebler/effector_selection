@@ -14,7 +14,7 @@ from pathlib import Path
 #      ├── 206-15.cazymes.txt <-- this one is optional
 
 ################ DEFAULT VALUES ################
-#Conditions for effector candidates
+#Conditions for selecting effector candidates
 effectorPscore = 0.8 # min EffectorP score
 MWcutoff = 25  # molecular weight of mature (cleaved signal peptide) candidate
 Cyscutoff = 2 # min number of cysteins
@@ -25,7 +25,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-i', '--input', help='path to a folder containing another folder with input files (default is a folder called "input" inside the directory where the script is)')
 parser.add_argument('-o', '--output', help='folder for output files (default "output" inside the directory where the script is)')
 parser.add_argument('-e','--effectorPscore', help='set minimum effectoP score (default = 0.8)', type=float)
-parser.add_argument('-m', '--MWcutoff', help='set maximum molecular weight of mature candidate (default = 25) ', type=int)
+parser.add_argument('-m', '--MWcutoff', help='set maximum molecular weight of mature candidate in kDa (default = 25) ', type=int)
 parser.add_argument('-c', '--cysteins', help='set minimum number of cysteins in mature candidate (default = 2)', type=int)
 args = parser.parse_args()
 
@@ -100,7 +100,6 @@ for sample in samples:
         print('ERROR - missing:', deepsig_file)
     if not os.path.isfile(effectorP_file_path):
         print('ERROR - missing:', effectorP_file)
-        cd
     print(sample,"- All good, ready to roll")
     #Change this to where outputfiles shall go
     candidate_output_dir = output_path / sample / output
