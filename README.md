@@ -7,9 +7,12 @@ usage:
 ```
 candidates.py [-h] [-i INPUT] [-o OUTPUT] [-e EFFECTORPSCORE] [-m MWCUTOFF] [-c CYSTEINS]
 ```
+example:
+```
+candidates.py -i /path/inputfolder -o /path/outputfolder -e 0.8 -m 25 -c 2
 ```
 optional arguments:
-
+```
 -h, --help 
 show this help message and exit
 
@@ -21,7 +24,7 @@ directory where the script is)
 -o OUTPUT, --output OUTPUT
 folder for output files (default "output" inside the directory where the script is)
 
-- -e EFFECTORPSCORE, --effectorPscore EFFECTORPSCORE
+-e EFFECTORPSCORE, --effectorPscore EFFECTORPSCORE
 set minimum effectoP score (default = 0.8)
 
 -m MWCUTOFF, --MWcutoff MWCUTOFF
