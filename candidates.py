@@ -1,23 +1,17 @@
 import os
 import re
 import csv
-import glob
 import argparse
 from pathlib import Path
 
-# This script expects a folder structure like this:
-#
-# ├── candidates.py
-# ├── output
-# |     ├── 206-15
-# |         ├── 206-15.deepsig.out
-# |         ├── 206-15.effectorP.tsv
-# |         ├── 206-15.genemark.proteins.fasta
-# |         ├── 206-15.interproscan.tsv
-# |         ├── 206-15.cazymes.txt <-- this one is optional
-#
-# scrape 'output' directory and use subfoldernames as sample names for further processing,
-# this requires a folder structure of 'output/sampleID'
+# This script expects a folder with the name of the sample containing following input files:
+
+#  ├── 206-15
+#      ├── 206-15.deepsig.out
+#      ├── 206-15.effectorP.tsv
+#      ├── 206-15.genemark.proteins.fasta
+#      ├── 206-15.interproscan.tsv
+#      ├── 206-15.cazymes.txt <-- this one is optional
 
 ################ DEFAULT VALUES ################
 #Conditions for effector candidates
@@ -28,8 +22,8 @@ Cyscutoff = 2 # min number of cysteins
 
 #parse commandline arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('-i', '--input', help='folder containing folder with input files (default is a folder called "input")')
-parser.add_argument('-o', '--output', help='folder for output files (default "output")')
+parser.add_argument('-i', '--input', help='path to a folder containing another folder with input files (default is a folder called "input" inside the directory where the script is)')
+parser.add_argument('-o', '--output', help='folder for output files (default "output" inside the directory where the script is)')
 parser.add_argument('-e','--effectorPscore', help='set minimum effectoP score (default = 0.8)', type=float)
 parser.add_argument('-m', '--MWcutoff', help='set maximum molecular weight of mature candidate (default = 25) ', type=int)
 parser.add_argument('-c', '--cysteins', help='set minimum number of cysteins in mature candidate (default = 2)', type=int)
@@ -106,7 +100,7 @@ for sample in samples:
         print('ERROR - missing:', deepsig_file)
     if not os.path.isfile(effectorP_file_path):
         print('ERROR - missing:', effectorP_file)
-        cd 
+        cd
     print(sample,"- All good, ready to roll")
     #Change this to where outputfiles shall go
     candidate_output_dir = output_path / sample / output
