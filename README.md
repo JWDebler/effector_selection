@@ -1,5 +1,5 @@
 # candidates.py
-A Python script that scrapes the output files of deepsig, effectorP, Interproscan (including SignalP) and dbCAN (cazymes) and selects effector candidates on the basis of user selectable criteria, i.e. effectorP score, number of cysteins, molecular weight of the mature protein.
+A Python 3 script that scrapes the output files of [deepsig](https://deepsig.biocomp.unibo.it/welcome/default/index), [effectorP](http://effectorp.csiro.au/), [Interproscan](https://www.ebi.ac.uk/interpro/search/sequence-search) (including [SignalP](http://www.cbs.dtu.dk/services/SignalP/)) and [dbCAN](http://cys.bios.niu.edu/dbCAN2/blast.php) (cazymes) and selects effector candidates on the basis of user selectable criteria, i.e. effectorP score, number of cysteins and molecular weight of the mature protein.
 
 # Usage
 
