@@ -2,6 +2,7 @@ import os
 import re
 import csv
 import argparse
+import glob
 from pathlib import Path
 
 # This script expects a folder with the name of the sample containing following input files:
@@ -9,7 +10,7 @@ from pathlib import Path
 #  ├── 206-15
 #      ├── 206-15.deepsig.out
 #      ├── 206-15.effectorP.tsv
-#      ├── 206-15.genemark.proteins.fasta
+#      ├── 206-15.proteins.fasta
 #      ├── 206-15.interproscan.tsv
 #      ├── 206-15.cazymes.txt <-- this one is optional
 
@@ -79,18 +80,32 @@ for sample in samples:
     print(sample,"- Checking if all required files are present")
 
     input_dir = input_path / sample
-    protein_file = sample+'.genemark.proteins.fasta'
-    protein_file_path = os.path.join(input_dir, protein_file)
-    interproscan_file = sample+'.interproscan.tsv'
-    interproscan_file_path = os.path.join(input_dir, interproscan_file)
-    deepsig_file = sample+'.deepsig.out'
-    deepsig_file_path = os.path.join(input_dir, deepsig_file)
-    effectorP_file = sample+'.effectorP.tsv'
-    effectorP_file_path = os.path.join(input_dir, effectorP_file)
+    protein_file = '*proteins.fasta'
+    protein_file_name = os.path.join(input_dir, protein_file)
+    for element in glob.glob(protein_file_name):
+        protein_file_path = Path(element)
 
-    cazyme_file = sample+'.cazymes.txt'
-    cazyme_file_path = os.path.join(input_dir, cazyme_file)
-    cazyme_file_present = Path(cazyme_file_path).is_file()
+    interproscan_file = '*interproscan.tsv'
+    interproscan_file_name = os.path.join(input_dir, interproscan_file)
+    for element in glob.glob(interproscan_file_name):
+        interproscan_file_path = Path(element)
+
+    deepsig_file = '*deepsig.out'
+    deepsig_file_name = os.path.join(input_dir, deepsig_file)
+    for element in glob.glob(deepsig_file_name):
+        deepsig_file_path = Path(element)
+
+    effectorP_file = '*effectorP.tsv'
+    effectorP_file_name = os.path.join(input_dir, effectorP_file)
+    for element in glob.glob(effectorP_file_name):
+        effectorP_file_path = Path(element)
+
+    cazyme_file = '*cazymes.txt'
+    cazyme_file_present = False
+    cazyme_file_name = os.path.join(input_dir, cazyme_file)
+    for element in glob.glob(cazyme_file_name):
+        cazyme_file_path = Path(element)
+        cazyme_file_present = True
 
     if not os.path.isfile(protein_file_path):
         print('ERROR - missing:', protein_file)
@@ -176,8 +191,8 @@ for sample in samples:
 
     print(sample, '- processed interproScan data')
 
-    #Read dbCAN2 CAZyme output
-    if Path(cazyme_file_path).is_file():
+    #Read dbCAN2 CAZyme output if cazyme file is available
+    if cazyme_file_present:
         with open(cazyme_file_path) as file:
             print(sample,'- reading CAZyme file')
             input = csv.reader(file, delimiter='\t')
