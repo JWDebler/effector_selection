@@ -42,3 +42,5 @@ set maximum molecular weight of mature candidate (default = 25)
 -c CYSTEINS, --cysteins CYSTEINS
 set minimum number of cysteins in mature candidate (default = 2)
 ```
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3526820.svg)](https://doi.org/10.5281/zenodo.3526820)
